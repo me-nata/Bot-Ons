@@ -47,11 +47,6 @@ class Card:
         """
 
 
-    def add_in(self, file):
-        with open(file, 'a') as f:
-            f.write(self.footer['Nome do arquivo']+';')
-
-
     @staticmethod
     def cards(titles, subtitles, footer, links) -> list:
         cards = []
