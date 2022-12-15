@@ -1,0 +1,9 @@
+# ignorar a cache do python independente da pasta
+__pycache__
+*/__pycache__
+
+# ignorar o ambiente virtual do python
+venv
+
+# ignorar dados de coockies do chrome
+profile
