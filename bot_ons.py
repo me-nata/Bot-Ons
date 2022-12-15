@@ -3,15 +3,20 @@ from card_ons import Card
 from utils.general import execute, sleep
 from utils.driver import Err
 import pandas as pd
+import os
 
 
-ARCHIVE = './files/links.csv'
-CACHE_FILE = './files/cache'
+FILE_DIR = './files'
+if not os.path.exists(FILE_DIR):
+    os.mkdir(FILE_DIR)
+
+LINKS = f'{FILE_DIR}/links.csv'
+CACHE_FILE = F'{FILE_DIR}/cache'
+
+
 END = False
-
-
 class BotOns:
-    def __init__(self, file=ARCHIVE) -> None:
+    def __init__(self, file=LINKS) -> None:
         self.df_links = pd.read_csv(file, sep=';') 
 
 
@@ -32,7 +37,7 @@ class BotOns:
         for card in cards:
             if card.match_required(name_search, type_card):
                 if not card.in_cache(CACHE_FILE):
-                    card.save(ARCHIVE)
+                    card.save(LINKS)
                     card.save(CACHE_FILE, cache=True)
 
                 output = card

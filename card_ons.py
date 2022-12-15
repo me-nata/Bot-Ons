@@ -1,3 +1,4 @@
+import os
 import pandas as pd
 
 
@@ -56,9 +57,23 @@ class Card:
         return cards
 
     
+    @staticmethod
+    def _create_file_if_not_exist(file, cache):
+        if not os.path.exists(file):
+            if not cache:
+                csv = open(file, 'w')
+                csv.write('Titulo;SubTitulo;Tipo;Nome;Data;Processo;Link')
+                csv.close()
+            else:
+                open(file, 'w').close()
+            
+
     def save(self, file, cache=False):
+        Card._create_file_if_not_exist(file, cache)
+
         nome = self.footer['Nome do arquivo']
         data = ''
+
         if cache:
             data = f'{nome}\n'
         else:
@@ -74,6 +89,8 @@ class Card:
         
 
     def in_cache(self, file):
+        Card._create_file_if_not_exist(file, cache=True)
+
         with open(file, 'r') as f:
             lines = f.readlines()
             f.close()

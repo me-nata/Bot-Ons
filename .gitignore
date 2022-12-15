@@ -7,3 +7,6 @@ venv
 
 # ignorar dados de coockies do chrome
 profile
+
+#ignorar arquivos baixados
+files
