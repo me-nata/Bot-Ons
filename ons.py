@@ -1,6 +1,5 @@
-import os
 from utils.driver import *
-from utils.general import sleep
+from utils.general import sleep, os
 
 
 dir_path = os.getcwd()

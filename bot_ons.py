@@ -1,25 +1,10 @@
 from ons import ONS
 from card_ons import Card
-from utils.general import execute, sleep
+from utils.general import *
 from utils.driver import Err
-import pandas as pd
-import os
 
 
-FILE_DIR = './files'
-if not os.path.exists(FILE_DIR):
-    os.mkdir(FILE_DIR)
-
-LINKS = f'{FILE_DIR}/links.csv'
-CACHE_FILE = F'{FILE_DIR}/cache'
-
-
-END = False
 class BotOns:
-    def __init__(self, file=LINKS) -> None:
-        self.df_links = pd.read_csv(file, sep=';') 
-
-
     @staticmethod
     def exec():
         ONS.accessONS()
@@ -27,25 +12,23 @@ class BotOns:
 
 
     @staticmethod
-    def get_card(name_search, type_card, day_init, day_end):
-        cards = Card.cards(*ONS.request_card_info(name_search, day_init, day_end))
+    def get_card(name_search, type_file, day_start, day_end):
+        cards = Card.cards(*ONS.request_card_info(name_search, day_start, day_end))
 
         if len(cards) == 0:
             return Err.ELEMENT_NOT_FOUND
 
-        output = None
+        output = []
         for card in cards:
-            if card.match_required(name_search, type_card):
-                if not card.in_cache(CACHE_FILE):
-                    card.save(LINKS)
-                    card.save(CACHE_FILE, cache=True)
-
-                output = card
+            print(card)
+            if card.match_required(name_search, type_file):
+                output.append(card)
         
-        if output == None:
-            output = Err.SEARCH_NOT_AVAILABLE
-                
-        return output
+        if output == []:
+            return Err.SEARCH_NOT_AVAILABLE
+            
+
+        return output[0] if len(output) == 1 else output
 
     
     @staticmethod
