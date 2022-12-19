@@ -1,6 +1,18 @@
 from datetime import date
 from time import sleep
 from threading import Thread
+import os
+
+
+def create_file_if_not_exist(file, on_create=''):
+    out = False
+    if not os.path.exists(file):
+        csv = open(file, 'w')
+        csv.write(on_create)
+        csv.close()
+        out = True
+
+    return out        
 
 
 def today() -> str:

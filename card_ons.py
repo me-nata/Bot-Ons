@@ -1,6 +1,8 @@
 import os
 import pandas as pd
 
+from utils.general import create_file_if_not_exist
+
 
 class Card:
     def __init__(self, title, subtitle, footer, link) -> None:
@@ -34,8 +36,7 @@ class Card:
 
     def match_required(self, search_name:str, type_required:str):
         name = self.footer['Nome do arquivo'].split('.')[0].lower()
-        type = self.footer['Nome do arquivo'].split('.')[1].lower()
-
+        type = self.footer['Nome do arquivo'].split('.')[-1].lower()
         return search_name.lower() in name and type_required == type
 
 
@@ -55,50 +56,3 @@ class Card:
             cards.append(Card(titles[i], subtitles[i], footer[i], links[i]))
 
         return cards
-
-    
-    @staticmethod
-    def _create_file_if_not_exist(file, cache):
-        if not os.path.exists(file):
-            if not cache:
-                csv = open(file, 'w')
-                csv.write('Titulo;SubTitulo;Tipo;Nome;Data;Processo;Link')
-                csv.close()
-            else:
-                open(file, 'w').close()
-            
-
-    def save(self, file, cache=False):
-        Card._create_file_if_not_exist(file, cache)
-
-        nome = self.footer['Nome do arquivo']
-        data = ''
-
-        if cache:
-            data = f'{nome}\n'
-        else:
-            tipo = self.footer['Tipo']
-            data = self.footer['Data']
-            processo = self.footer['Processo']
-
-            data = f'\n{self.title};{self.subtitle};{tipo};{nome};{data};{processo};{self.link}'
-
-        with open(file, 'a') as links:
-            links.write(data)
-            links.close()
-        
-
-    def in_cache(self, file):
-        Card._create_file_if_not_exist(file, cache=True)
-
-        with open(file, 'r') as f:
-            lines = f.readlines()
-            f.close()
-
-        output = False
-        for name in lines:
-            if name[:-1] == self.footer['Nome do arquivo']:
-                output = True
-                break
-
-        return output
