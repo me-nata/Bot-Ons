@@ -3,6 +3,7 @@ from selenium import webdriver
 from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.common.by import By
 from utils.general import execute
+import os
 
 
 class Err(Enum):
@@ -25,22 +26,43 @@ class Element:
 
 
 class MyDriver:
-    def __init__(self, options) -> None:
+    def __init__(self, name_dir) -> None:
+        dir_path = os.getcwd()
+        profile = os.path.join(dir_path, "profile", name_dir)
+        options = webdriver.ChromeOptions()
+        options.add_argument(r"user-data-dir={}".format(profile))
+
         self.DRIVER = webdriver.Chrome(chrome_options=options)
+        
         self.END = False
+        self.IN_EXEC = False
 
 
     def _access(self, site:str) -> None:
         self.DRIVER.get(site)
         self.DRIVER.maximize_window()
+        self.END = False
         while not self.END: pass
 
 
-    def access(self, site) -> None:
+    def access(self, site:str) -> None:
+        if self.IN_EXEC:
+            self.END = True
+
+        self.IN_EXEC = True
         execute(self._access, args=[site])
 
 
-    def exist(self, element: Element):
+    def close(self) -> None:
+        self.END = True
+        self.IN_EXEC = False
+
+
+    def open(self, link:str) -> None:
+        self.DRIVER.get(link)
+
+
+    def exist(self, element: Element) -> True:
         try:
             self.DRIVER.find_element(element['by'], element['value'])
         except: 

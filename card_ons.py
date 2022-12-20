@@ -43,6 +43,13 @@ class Card:
         """
 
 
+    def str_wpp(self):
+        return f"""
+            {self.title}\n
+            data:{self.footer['Data']}\n
+        """
+
+
     @staticmethod
     def cards(titles, subtitles, footer, links) -> list:
         cards = []

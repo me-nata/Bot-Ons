@@ -2,60 +2,49 @@ from utils.driver import *
 from utils.general import sleep, os
 
 
-dir_path = os.getcwd()
-profile = os.path.join(dir_path, "profile", "ons")
-options = webdriver.ChromeOptions()
-options.add_argument(r"user-data-dir={}".format(profile))
-
-driver= MyDriver(options)
-
-
 class ONS:
-    @staticmethod
-    def accessONS():
-        global driver
-        driver.access('https://sintegre.ons.org.br/paginas/busca.aspx')    
+    def __init__(self) -> None:
+        self.driver= MyDriver(name_dir='ons')
 
 
-    @staticmethod
-    def enter_login():
-        global driver
+    def download(self, link:str) -> None:
+        self.driver.open(link)
 
+
+    def accessONS(self) -> None:
+        self.driver.access('https://sintegre.ons.org.br/paginas/busca.aspx')    
+
+
+    def enter_login(self):
         id_email = 'username'
         id_password = 'password'
 
-        if driver.exist(Element.make(By.ID, id_password)) or driver.exist(Element.make(By.ID, id_email)):
+        if self.driver.exist(Element.make(By.ID, id_password)) or self.driver.exist(Element.make(By.ID, id_email)):
             print('Please make your login in ONS')
-            while driver.exist(Element.make(By.ID, id_password)) or driver.exist(Element.make(By.ID, id_email)): pass
+            while self.driver.exist(Element.make(By.ID, id_password)) or self.driver.exist(Element.make(By.ID, id_email)): pass
+            sleep(2)
+            self.driver.restart()
         
         print('Login Success')
 
-        sleep(3)
-        
-        driver.restart()
 
-
-    @staticmethod
-    def search(name, date_de, date_ate):
-        global driver
-
+    def search(self, name, date_de, date_ate):
         id_search = 'tbSearch'
         id_date_de = 'tbDataDe'
         id_date_ate = 'tbDataAte'
         
-        driver.write(Element.make(By.ID, id_search, name), delete_field=True)
-        driver.write(Element.make(By.NAME, id_date_de, word=date_de), delete_field=True)
-        driver.write_enter(Element.make(By.NAME, id_date_ate, word=date_ate), delete_field=True)
+        self.driver.write(Element.make(By.ID, id_search, name), delete_field=True)
+        self.driver.write(Element.make(By.NAME, id_date_de, word=date_de), delete_field=True)
+        self.driver.write_enter(Element.make(By.NAME, id_date_ate, word=date_ate), delete_field=True)
 
 
-    @staticmethod
-    def request_card_info(name_search, day_init, day_end):
-        execute(ONS.search, args=[name_search, day_init, day_end], thread=False)
+    def request_card_info(self, name_search, day_init, day_end):
+        execute(self.search, args=[name_search, day_init, day_end], thread=False)
 
-        titles_element    = driver.DRIVER.find_elements(By.CLASS_NAME, 'resultado-titulo')
-        subtitles_element = driver.DRIVER.find_elements(By.CLASS_NAME, 'resultado-corpo')
-        footer_element    = driver.DRIVER.find_elements(By.CLASS_NAME, 'resultado-footer')
-        links_element     = driver.DRIVER.find_elements(By.ID, 'link-botao')
+        titles_element    = self.driver.DRIVER.find_elements(By.CLASS_NAME, 'resultado-titulo')
+        subtitles_element = self.driver.DRIVER.find_elements(By.CLASS_NAME, 'resultado-corpo')
+        footer_element    = self.driver.DRIVER.find_elements(By.CLASS_NAME, 'resultado-footer')
+        links_element     = self.driver.DRIVER.find_elements(By.ID, 'link-botao')
 
         titles = MyDriver.getPropertys(titles_element, 'innerText')
         subtitles = MyDriver.getPropertys(subtitles_element, 'innerText')

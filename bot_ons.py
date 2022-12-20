@@ -5,15 +5,17 @@ from utils.driver import Err
 
 
 class BotOns:
-    @staticmethod
-    def exec():
-        ONS.accessONS()
-        execute(ONS.enter_login, prev_wait=5, for_wait=5, thread=False)
+    def __init__(self) -> None:
+        self.ons = ONS()
 
 
-    @staticmethod
-    def get_card(name_search, type_file, day_start, day_end):
-        cards = Card.cards(*ONS.request_card_info(name_search, day_start, day_end))
+    def exec(self):
+        self.ons.accessONS()
+        execute(self.ons.enter_login, thread=False)
+
+
+    def get_card(self, name_search, type_file, day_start, day_end):
+        cards = Card.cards(*self.ons.request_card_info(name_search, day_start, day_end))
 
         if len(cards) == 0:
             return Err.ELEMENT_NOT_FOUND
@@ -31,11 +33,14 @@ class BotOns:
         return output[0] if len(output) == 1 else output
 
     
-    @staticmethod
-    def get_cards(infos:list):
+    def get_cards(self, infos:list):
         out = []
         for info in infos:
-            out.append(BotOns.get_card(*info))
+            out.append(self.get_card(*info))
             sleep(1)
 
         return out
+
+
+    def get_file(self, card: Card) -> None:
+        self.ons.download(card.link)

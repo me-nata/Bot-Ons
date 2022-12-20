@@ -1,8 +1,15 @@
+# from card_ons import Card
 from bot_ons import BotOns
-from utils.general import today
+# from utils.driver import MyDriver
+from wpp import Wpp
 
 
-BotOns.exec()
-out = BotOns.get_card('acomph', 'xls', '12/12/2022', today())
+PATH_DOWNLOAD = 'C:\\Users\\middle\\Downloads\\'
 
-print(*out if type(out) == list else out)
+bot = BotOns()
+bot.exec()
+card= bot.get_card('ipdo', 'pdf', '12/12/2022', '12/12/2022')[0]
+# bot.get_file(card)
+
+wpp = Wpp()
+wpp.send_to('+5533998358645', text=card.str_wpp(), file=PATH_DOWNLOAD + card.footer['Nome do arquivo'])
